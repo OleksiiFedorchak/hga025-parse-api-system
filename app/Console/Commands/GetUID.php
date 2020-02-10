@@ -10,12 +10,7 @@ namespace App\Console\Commands;
  */
 
 use App\Jobs\ProcessOdds;
-use App\Match;
-use App\Tools\HgaClient;
-use App\Tools\HgaConnector;
-use App\Tools\HgaGetter;
 use Illuminate\Console\Command;
-use App\Tools\Settings\SportTypes;
 
 /**
  * Class for processing data with Hga025
@@ -49,32 +44,5 @@ class GetUID extends Command
         $this->info('Start process..');
         ProcessOdds::dispatch()->onQueue('processing');
         $this->info('dispatched..');
-
-//        $connector = (new HgaConnector())->setConnection()->save();
-//        $hgaClient = new HgaClient($connector);
-//
-//        $this->process($hgaClient, SportTypes::SOCCER, false);
-//        $this->process($hgaClient, SportTypes::BASKETBALL, false);
     }
-
-//    /**
-//     * process specific case
-//     *
-//     * @param HgaClient $hgaClient
-//     * @param string $sportType
-//     * @param bool $isLive
-//     */
-//    private function process(HgaClient $hgaClient, string $sportType, bool $isLive)
-//    {
-//        foreach ($hgaClient->matches($sportType, $isLive) as $matchId) {
-//            $this->info('Processing match: ' . $matchId);
-//            $matchModel = new Match();
-//            $matchClient = $hgaClient->match($matchId, $sportType, $isLive);
-//            $matchGetter = new HgaGetter($matchClient);
-//
-//            $matchModel
-//                ->set($matchGetter, ['match_id' => $matchId, 'sport_type' => $sportType, 'is_live' => $isLive])
-//                ->save();
-//        }
-//    }
 }

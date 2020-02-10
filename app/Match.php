@@ -81,6 +81,22 @@ class Match extends Model
     ];
 
     /**
+     * trackable properties
+     *
+     * @var array
+     */
+    protected $trackable = [
+        'ior_RH',
+        'ior_RC',
+        'ior_OUH',
+        'ior_OUC',
+        'ior_EOO',
+        'ior_EOE',
+        'ior_OUCO',
+        'ior_OUCU',
+    ];
+
+    /**
      * set by getter
      *
      * @param HgaGetter $getter
@@ -101,5 +117,15 @@ class Match extends Model
             $this->$property = $value;
 
         return $this;
+    }
+
+    /**
+     * trackable properties list getter
+     *
+     * @return array
+     */
+    public function getTrackableProperties()
+    {
+        return $this->trackable;
     }
 }

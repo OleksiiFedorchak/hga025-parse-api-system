@@ -10,6 +10,7 @@ namespace App\Jobs;
  */
 
 use App\Match;
+use App\Packages\ContactUs\Http\Requests\ValidateCreateContactUsMessage;
 use App\Tools\HgaClient;
 use App\Tools\HgaConnector;
 use App\Tools\HgaGetter;
@@ -44,15 +45,23 @@ class ProcessOdds implements ShouldQueue
         $hgaClient = new HgaClient($connector);
 
         try {
-            $this->process($hgaClient, SportTypes::SOCCER, false);
-            $this->process($hgaClient, SportTypes::BASKETBALL, false);
+            if (!empty(env('CURRENT_TRACKING_MATCH'))) {
+                $this->processSpecificMatch($hgaClient, SportTypes::SOCCER, false, env('CURRENT_TRACKING_MATCH'));
+            } else {
+                $this->process($hgaClient, SportTypes::SOCCER, false);
+                $this->process($hgaClient, SportTypes::BASKETBALL, false);
+            }
         } catch (\Exception $e) {
             try {
                 $connector->refreshConnection();
                 $hgaClient = new HgaClient($connector);
 
-                $this->process($hgaClient, SportTypes::SOCCER, false);
-                $this->process($hgaClient, SportTypes::BASKETBALL, false);
+                if (!empty(env('CURRENT_TRACKING_MATCH'))) {
+                    $this->processSpecificMatch($hgaClient, SportTypes::SOCCER, false, env('CURRENT_TRACKING_MATCH'));
+                } else {
+                    $this->process($hgaClient, SportTypes::SOCCER, false);
+                    $this->process($hgaClient, SportTypes::BASKETBALL, false);
+                }
             } catch (\Exception $e) {}
         }
 
@@ -79,5 +88,26 @@ class ProcessOdds implements ShouldQueue
                     ->save();
             } catch (\Exception $e) {}
         }
+    }
+
+    /**
+     * process specific match
+     *
+     * @param HgaClient $hgaClient
+     * @param string $sportType
+     * @param bool $isLive
+     * @param int $matchId
+     */
+    private function processSpecificMatch(HgaClient $hgaClient, string $sportType, bool $isLive, int $matchId)
+    {
+        try {
+            $matchModel = new Match();
+            $matchClient = $hgaClient->match($matchId, $sportType, $isLive);
+            $matchGetter = new HgaGetter($matchClient);
+
+            $matchModel
+                ->set($matchGetter, ['match_id' => $matchId, 'sport_type' => $sportType, 'is_live' => $isLive])
+                ->save();
+        } catch (\Exception $e) {}
     }
 }
