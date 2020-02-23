@@ -10,6 +10,10 @@ namespace App\Console\Commands;
  */
 
 use App\Jobs\ProcessOdds;
+use App\Tools\HgaClient;
+use App\Tools\HgaConnector;
+use App\Tools\Settings\SportTypes;
+use App\Traits\Processors;
 use Illuminate\Console\Command;
 
 /**
@@ -20,6 +24,7 @@ use Illuminate\Console\Command;
  */
 class GetUID extends Command
 {
+    use Processors;
     /**
      * The name and signature of the console command.
      *

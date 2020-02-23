@@ -11,6 +11,7 @@ namespace App\Tools;
 
 use App\Tools\Settings\SportTypes;
 use Goutte\Client;
+use GuzzleHttp\Client as GuzzleClient;
 use Carbon\Carbon;
 use Symfony\Component\DomCrawler\Crawler;
 
@@ -35,6 +36,13 @@ class HgaClient
     protected $client;
 
     /**
+     * Guzzle is necessary because Goutte is not working in job mode
+     *
+     * @var GuzzleClient
+     */
+    protected $guzzleClient;
+
+    /**
      * Construct new instance
      *
      * HgaClient constructor.
@@ -44,6 +52,7 @@ class HgaClient
     {
         $this->connector = $connector;
         $this->client = new Client();
+        $this->guzzleClient = new GuzzleClient();
     }
 
     /**
@@ -65,6 +74,27 @@ class HgaClient
         return $this->client->request('GET', DataSettings::url($urlData, $sportType, $isLive))
             ->filter('#gid' . $gid)
             ->first();
+    }
+
+    /**
+     * get match using Guzzle
+     *
+     * @param string $gid
+     * @param string $sportType
+     * @param bool $isLive
+     * @return string
+     */
+    public function matchByGuzzle(string $gid, string $sportType = SportTypes::BASKETBALL, bool $isLive = false)
+    {
+        $urlData = [
+            'uid' => $this->connector->uid(),
+            'gid' => $gid,
+            'date' => Carbon::now()->format('Y-m-d'),
+        ];
+
+        return $this->guzzleClient->request('GET', DataSettings::url($urlData, $sportType, $isLive))
+            ->getBody()
+            ->getContents();
     }
 
     /**

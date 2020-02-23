@@ -9,7 +9,7 @@ namespace App;
  * Used packages
  */
 
-use App\Tools\HgaGetter;
+use App\Tools\Getter;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -99,11 +99,11 @@ class Match extends Model
     /**
      * set by getter
      *
-     * @param HgaGetter $getter
+     * @param Getter $getter
      * @param array $additional
      * @return $this
      */
-    public function set(HgaGetter $getter, array $additional = [])
+    public function set(Getter $getter, array $additional = [])
     {
         foreach ($this->getFillable() as $property) {
             if (array_search($property, $this->disableDynamicalSet) !== FALSE)

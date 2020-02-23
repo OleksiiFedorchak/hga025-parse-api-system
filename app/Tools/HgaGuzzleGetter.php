@@ -8,32 +8,32 @@ namespace App\Tools;
 /**
  * Used packages
  */
-use Symfony\Component\DomCrawler\Crawler;
+use SimpleXMLElement;
 
 /**
  * Class for getting special data
  *
- * Class HgaGetter
+ * Class HgaGuzzleGetter
  * @package App\Tools
  */
-class HgaGetter implements Getter
+class HgaGuzzleGetter implements Getter
 {
     /**
-     * Goutte Client instance
+     * Simple xml instance item
      *
-     * @var Crawler
+     * @var SimpleXMLElement
      */
-    protected $client;
+    protected $xml;
 
     /**
      * Bring him to life..
      *
-     * HgaGetter constructor.
-     * @param Crawler $client
+     * HgaGuzzleGetter constructor.
+     * @param SimpleXMLElement $xml
      */
-    public function __construct(Crawler $client)
+    public function __construct(SimpleXMLElement $xml)
     {
-        $this->client = $client;
+        $this->xml = $xml;
     }
 
     /**
@@ -45,9 +45,6 @@ class HgaGetter implements Getter
      */
     public function __call($name, $arguments)
     {
-        return $this->client
-            ->filter($name)
-            ->first()
-            ->text();
+        return (string) $this->xml[0]->children()->game[0]->$name;
     }
 }
