@@ -46,28 +46,62 @@ class GetUID extends Command
     public function handle()
     {
         $this->info('Running processors');
+
         try {
             $connector = (new HgaConnector())->setConnection()->save();
             $hgaClient = new HgaClient($connector);
 
-            foreach (collect($hgaClient->matches())->chunk(25) as $chunkedMatches) {
-
-                $counter = 1;
-                foreach ($chunkedMatches as $key => $matchId) {
-                    ProcessSpecificMatch::dispatch($connector->uid(), SportTypes::BASKETBALL, false, $matchId)
-                        ->onQueue('p' . $counter);
-
-                    $counter++;
-                }
-            }
+            $this->dispatchPreMatch($hgaClient, $connector);
+            $this->dispatchLive($hgaClient, $connector);
 
             sleep(15);
             $this->call('process:odds');
         } catch (\Exception $e) {
+
             $this->info('Server falling.. Retry in fifteen seconds..');
             sleep(15);
 
             $this->call('process:odds');
+        }
+    }
+
+    /**
+     * dispatch pre match workers
+     *
+     * @param HgaClient $hgaClient
+     * @param HgaConnector $connector
+     */
+    private function dispatchPreMatch(HgaClient $hgaClient, HgaConnector $connector)
+    {
+        foreach (collect($hgaClient->matches())->chunk(15) as $chunkedMatches) {
+
+            $counter = 1;
+            foreach ($chunkedMatches as $key => $matchId) {
+                ProcessSpecificMatch::dispatch($connector->uid(), SportTypes::BASKETBALL, false, $matchId)
+                    ->onQueue('p' . $counter);
+
+                $counter++;
+            }
+        }
+    }
+
+    /**
+     * dispatch live matches
+     *
+     * @param HgaClient $hgaClient
+     * @param HgaConnector $connector
+     */
+    private function dispatchLive(HgaClient $hgaClient, HgaConnector $connector)
+    {
+        foreach (collect($hgaClient->matches(SportTypes::BASKETBALL, true))->chunk(5) as $chunkedMatches) {
+
+            $counter = 1;
+            foreach ($chunkedMatches as $key => $matchId) {
+                ProcessSpecificMatch::dispatch($connector->uid(), SportTypes::BASKETBALL, true, $matchId)
+                    ->onQueue('pL' . $counter);
+
+                $counter++;
+            }
         }
     }
 }

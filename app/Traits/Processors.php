@@ -72,6 +72,7 @@ trait Processors
         $matchClient = $hgaClient->matchByGuzzle($matchId, $sportType, $isLive);
         $matchGetter = new HgaGuzzleGetter(new SimpleXMLElement($matchClient));
 
+        $matchModel->is_live = $isLive;
         $matchModel
             ->set($matchGetter, ['match_id' => $matchId, 'sport_type' => $sportType, 'is_live' => $isLive])
             ->save();

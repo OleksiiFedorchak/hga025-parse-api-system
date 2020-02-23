@@ -113,13 +113,19 @@ class HgaClient
             );
 
         return collect(
-            $nodes->each(function ($node) {
+            $nodes->each(function ($node) use ($isLive) {
                 $data = $node->text();
 
                 $ids = [];
                 foreach (explode(DataSettings::MATCHES_EXPLODE_DELIMETER, $data) as $explodedNode)
-                    if (strpos($explodedNode, DataSettings::MATCHES_IDS_IDENTIFIER) !== FALSE)
-                        $ids[] = str_replace(DataSettings::MATCHES_IDS_IDENTIFIER, '', $explodedNode);
+                    if (strpos($explodedNode, $isLive ? DataSettings::MATCHES_IDS_IDENTIFIER_LIVE : DataSettings::MATCHES_IDS_IDENTIFIER) !== FALSE) {
+                        if (!$isLive) {
+                            $ids[] = str_replace(DataSettings::MATCHES_IDS_IDENTIFIER, '', $explodedNode);
+                            continue;
+                        }
+
+                        $ids[] = explode(DataSettings::MATCHES_IDS_IDENTIFIER_LIVE, $explodedNode)[1];
+                    }
 
                 return $ids;
             })

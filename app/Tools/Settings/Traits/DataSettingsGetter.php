@@ -41,7 +41,7 @@ trait DataSettingsGetter
             . UrlSettings::URL_PARAMS_SEPARATOR
             . str_replace(DataSettings::SETTINGS_SEPARATOR, UrlSettings::URL_PARAMS_EQUAL, $sportType === SportTypes::BASKETBALL ? DataSettings::G_TYPE_BK : DataSettings::G_TYPE_FT)
             . UrlSettings::URL_PARAMS_SEPARATOR
-            . str_replace(DataSettings::SETTINGS_SEPARATOR, UrlSettings::URL_PARAMS_EQUAL, DataSettings::SHOW_TYPE)
+            . str_replace(DataSettings::SETTINGS_SEPARATOR, UrlSettings::URL_PARAMS_EQUAL, $isLive ? DataSettings::SHOW_TYPE_LIVE : DataSettings::SHOW_TYPE)
             . UrlSettings::URL_PARAMS_SEPARATOR
             . 'gid'
             . UrlSettings::URL_PARAMS_EQUAL

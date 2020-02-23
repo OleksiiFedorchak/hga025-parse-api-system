@@ -45,6 +45,37 @@ class HgaGuzzleGetter implements Getter
      */
     public function __call($name, $arguments)
     {
+        $name = $this->transformName($name);
         return (string) $this->xml[0]->children()->game[0]->$name;
+    }
+
+    /**
+     * get live titles
+     *
+     * @param string $name
+     * @return mixed
+     */
+    private function transformName(string $name)
+    {
+        $transforms = [
+            'ior_RH' => 'ior_REH',
+            'ior_RC' => 'ior_REC',
+            'ratio_rouo' => 'ratio_o',
+            'ratio_rouu' => 'ratio_u',
+            'ior_ROUH' => 'ior_OUH',
+            'ior_ROUC' => 'ior_OUC',
+            'ior_REOO' => 'ior_EOO',
+            'ior_REOE' => 'ior_EOE',
+            'ratio_ouho' => 'ratio_rouhu',
+            'ratio_ouhu' => 'ratio_rouhu',
+            'ior_OUHO' => 'ior_ROUHO',
+            'ior_OUHU' => 'ior_ROUHU',
+            'ratio_ouco' => 'ratio_rouco',
+            'ratio_oucu' => 'ratio_roucu',
+            'ior_OUCO' => 'ior_ROUCO',
+            'ior_OUCU' => 'ior_ROUCU',
+        ];
+
+        return $transforms[$name] ?? $name;
     }
 }

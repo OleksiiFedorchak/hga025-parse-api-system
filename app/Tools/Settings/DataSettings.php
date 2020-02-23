@@ -30,9 +30,10 @@ class DataSettings
     const G_TYPE_BK = 'gtype||BK';
     const G_TYPE_FT = 'gtype||FT';
     const SHOW_TYPE = 'showtype||FT';
+    const SHOW_TYPE_LIVE = 'showtype||RB';
     const L_TYPE = 'ltype||4';
     const R_TYPE_MAIN = 'rtype||r_main';
-    const R_TYPE_LIVE = 'rtype||re';
+    const R_TYPE_LIVE = 'rtype||re_main';
     const M_TYPE = 'mtype||4';
     const PAGE_NO = 'page_no||0';
     const LEAGUE_ID = 'league_id||';
@@ -45,5 +46,6 @@ class DataSettings
     CONST URL_BASKETBALL_TYPE = 'BK';
 
     CONST MATCHES_IDS_IDENTIFIER = 'Y\']); g([\'';
+    CONST MATCHES_IDS_IDENTIFIER_LIVE = '\']); g([\'';
     CONST MATCHES_EXPLODE_DELIMETER = '\',\'';
 }
