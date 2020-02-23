@@ -9,6 +9,7 @@ namespace App\Jobs;
  * Used packages
  */
 use App\Tools\HgaClient;
+use App\Tools\HgaConnector;
 use App\Traits\Processors;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -30,11 +31,11 @@ class ProcessSpecificMatch implements ShouldQueue
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, Processors;
 
     /**
-     * client instance
+     * connection uid
      *
-     * @var HgaClient
+     * @var string
      */
-    protected $hgaClient;
+    protected $uid;
 
     /**
      * sport type
@@ -61,14 +62,14 @@ class ProcessSpecificMatch implements ShouldQueue
      * create processor instance
      *
      * ProcessSpecificMatch constructor.
-     * @param HgaClient $hgaClient
+     * @param string $uid
      * @param string $sportType
      * @param bool $isLive
      * @param string $matchId
      */
-    public function __construct(HgaClient $hgaClient, string $sportType, bool $isLive, string $matchId)
+    public function __construct(string $uid, string $sportType, bool $isLive, string $matchId)
     {
-        $this->hgaClient = $hgaClient;
+        $this->uid = $uid;
         $this->sportType = $sportType;
         $this->isLive = $isLive;
         $this->matchId = $matchId;
@@ -81,6 +82,9 @@ class ProcessSpecificMatch implements ShouldQueue
      */
     public function handle()
     {
-        $this->processSpecificMatchByGuzzle($this->hgaClient, $this->sportType, $this->isLive, $this->matchId);
+        $connector = (new HgaConnector())->setUid($this->uid);
+        $hgaClient = new HgaClient($connector);
+
+        $this->processSpecificMatchByGuzzle($hgaClient, $this->sportType, $this->isLive, $this->matchId);
     }
 }

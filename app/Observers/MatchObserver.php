@@ -4,7 +4,6 @@ namespace App\Observers;
 
 use App\Match;
 use App\Traits\Notifiable;
-use Telegram\Bot\Api;
 use Telegram\Bot\Exceptions\TelegramSDKException;
 
 class MatchObserver
@@ -14,20 +13,14 @@ class MatchObserver
     /**
      * Handle the match "created" event.
      *
-     * @param  \App\Match  $match
+     * @param  Match  $match
      * @throws TelegramSDKException
      * @return void
      */
     public function created(Match $match)
     {
-        if (empty(env('CURRENT_TRACKING_MATCH')))
-            return;
-
-        if ($match->match_id != env('CURRENT_TRACKING_MATCH'))
-            return;
-
         $prevMatch = Match::where('id', '<', $match->id)
-            ->where('match_id', env('CURRENT_TRACKING_MATCH'))
+            ->where('match_id', $match->match_id)
             ->orderBy('id', 'DESC')
             ->first();
 
@@ -38,7 +31,7 @@ class MatchObserver
             if ($prevMatch->$property == 0 || $match->$property == 0)
                 return;
 
-            if (($match->$property - $prevMatch->$property) == 0)
+            if (($match->$property - $prevMatch->$property) < 2)
                 return;
 
             $this->notify($property, (float) $match->$property, (float) $prevMatch->$property);

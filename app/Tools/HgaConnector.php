@@ -90,4 +90,16 @@ class HgaConnector
 
         return $this;
     }
+
+    /**
+     * connection id setter
+     *
+     * @param string $uid
+     * @return $this
+     */
+    public function setUid(string $uid)
+    {
+        $this->uid = $uid;
+        return $this;
+    }
 }

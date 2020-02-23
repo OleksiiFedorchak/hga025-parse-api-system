@@ -33,9 +33,10 @@ trait Processors
      */
     public function process(HgaClient $hgaClient, string $sportType, bool $isLive)
     {
-        foreach ($hgaClient->matches($sportType, $isLive) as $matchId)
+        foreach ($hgaClient->matches($sportType, $isLive) as $matchId) {
             ProcessSpecificMatch::dispatch($hgaClient, (string) $sportType, (bool) $isLive, (int) $matchId)
                 ->onQueue('processing');
+        }
     }
 
     /**
