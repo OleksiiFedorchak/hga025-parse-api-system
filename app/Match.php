@@ -56,6 +56,7 @@ class Match extends Model
         'league',
         'team_h',
         'team_c',
+        'is_notified',
     ];
 
     /**
@@ -67,6 +68,7 @@ class Match extends Model
         'match_id',
         'is_live',
         'sport_type',
+        'is_notified',
     ];
 
     /**

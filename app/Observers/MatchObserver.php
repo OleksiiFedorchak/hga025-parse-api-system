@@ -27,14 +27,22 @@ class MatchObserver
         if (!$prevMatch)
             return;
 
+        $isRed = Match::where('match_id', $match->match_id)
+            ->where('id', '<', $match->id)
+            ->where('is_notified', true)
+            ->exists();
+
         foreach ($prevMatch->getTrackableProperties() as $property) {
             if ($prevMatch->$property == 0 || $match->$property == 0)
                 return;
 
-            if (($match->$property - $prevMatch->$property) < 2)
+            if (($match->$property - $prevMatch->$property) < 0.01)
                 return;
 
-            $this->notify($property, (float) $match->$property, (float) $prevMatch->$property);
+            $this->notify($property, (float) $match->$property, (float) $prevMatch->$property, $isRed);
+
+            $match->is_notified = true;
+            $match->save();
         }
     }
 

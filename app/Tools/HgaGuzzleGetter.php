@@ -46,7 +46,7 @@ class HgaGuzzleGetter implements Getter
     public function __call($name, $arguments)
     {
         $name = $this->transformName($name);
-        return (string) $this->xml[0]->children()->game[0]->$name;
+        return (string) $this->xml[0]->children()->game[0]->$name ?? 'undefined';
     }
 
     /**

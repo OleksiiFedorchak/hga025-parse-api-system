@@ -82,9 +82,13 @@ class ProcessSpecificMatch implements ShouldQueue
      */
     public function handle()
     {
-        $connector = (new HgaConnector())->setUid($this->uid);
-        $hgaClient = new HgaClient($connector);
+        try {
+            $connector = (new HgaConnector())->setUid($this->uid);
+            $hgaClient = new HgaClient($connector);
 
-        $this->processSpecificMatchByGuzzle($hgaClient, $this->sportType, $this->isLive, $this->matchId);
+            $this->processSpecificMatchByGuzzle($hgaClient, $this->sportType, $this->isLive, $this->matchId);
+        } catch (\Exception $e) {
+            sleep(3);
+        }
     }
 }
