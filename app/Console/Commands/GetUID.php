@@ -48,18 +48,18 @@ class GetUID extends Command
         $this->info('Running processors');
 
         try {
-            $connector = (new HgaConnector())->setConnection()->save();
+            $connector = (new HgaConnector())->refreshConnection();
             $hgaClient = new HgaClient($connector);
 
             $this->dispatchPreMatch($hgaClient, $connector);
             $this->dispatchLive($hgaClient, $connector);
 
-            sleep(15);
+            sleep(env('SLEEP_TIME'));
             $this->call('process:odds');
         } catch (\Exception $e) {
 
             $this->info('Server falling.. Retry in fifteen seconds..');
-            sleep(15);
+            sleep(env('SLEEP_TIME'));
 
             $this->call('process:odds');
         }

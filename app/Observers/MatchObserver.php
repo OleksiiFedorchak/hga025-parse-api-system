@@ -1,13 +1,28 @@
 <?php
 
+/**
+ * Class namespace
+ */
 namespace App\Observers;
 
+/**
+ * Used packages
+ */
 use App\Match;
 use App\Traits\Notifiable;
 use Telegram\Bot\Exceptions\TelegramSDKException;
 
+/**
+ * Observer on model changes
+ *
+ * Class MatchObserver
+ * @package App\Observers
+ */
 class MatchObserver
 {
+    /**
+     * Trait for notification due Telegram
+     */
     use Notifiable;
 
     /**
@@ -36,7 +51,7 @@ class MatchObserver
             if ($prevMatch->$property == 0 || $match->$property == 0)
                 return;
 
-            if (($match->$property - $prevMatch->$property) < 0.01)
+            if (($match->$property - $prevMatch->$property) < env('SUSTAINABLE_CHANGE'))
                 return;
 
             $this->notify($property, (float) $match->$property, (float) $prevMatch->$property, $isRed);
