@@ -47,6 +47,23 @@ class GetUID extends Command
     {
         $this->info('Running processors');
 
+        $guzzle = new \GuzzleHttp\Client(['headers' =>
+            [
+                'Accept' => 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
+                'Accept-Encoding' => 'gzip, deflate, br',
+                'Accept-Language' => 'en-US,en;q=0.9',
+                'Cache-Control' => 'max-age=0',
+                'Connection' => 'keep-alive',
+                'Cookie' => '_ga=GA1.2.1646811937.1581251963; _gid=GA1.2.253348605.1582564206; protocolstr=https',
+                'Host' => 'hga025.com',
+                'Upgrade-Insecure-Requests' => 1,
+                'User-Agent' => 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.181 Safari/537.36',
+            ]
+        ]);
+
+        $res = $guzzle->request('GET', 'https://hga025.com/');
+        dd($res->getBody()->getContents());
+
         try {
             $connector = (new HgaConnector())->refreshConnection();
             $hgaClient = new HgaClient($connector);
